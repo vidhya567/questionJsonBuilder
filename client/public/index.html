@@ -10,6 +10,25 @@
     -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
     <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
+    <!--<script>-->
+        <!--window.MathJax = {-->
+            <!--"fast-preview": {-->
+                <!--disabled: true-->
+            <!--},-->
+            <!--AuthorInit: function() {-->
+                <!--MathJax.Hub.Register.StartupHook('End', function() {-->
+                    <!--MathJax.Hub.processSectionDelay = 0-->
+                    <!--var demoSource = document.getElementById('demoSource')-->
+                    <!--var demoRendering = document.getElementById('demoRendering')-->
+                    <!--var math = MathJax.Hub.getAllJax('demoRendering')[0]-->
+                    <!--demoSource.addEventListener('input', function() {-->
+                        <!--MathJax.Hub.Queue(['Text', math, demoSource.value])-->
+                    <!--})-->
+                <!--})-->
+            <!--}-->
+        <!--}-->
+    <!--</script>-->
+
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -26,6 +45,22 @@
       You need to enable JavaScript to run this app.
     </noscript>
     <div id="root"></div>
+    <script type="text/javascript"
+            src=https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=AM_HTMLorMML-full.js>
+    </script>
+    <!--<div class="container">-->
+      <!--<div class="row">-->
+        <!--<div class="form-group">-->
+          <!--<label> Type in your equations</label>-->
+          <!--<textarea id="demoSource"  class="form-control"  rows="20" cols="150">-->
+            <!--sum_(i=1)^n i^3=((n(n+1))/2)^2-->
+          <!--</textarea>-->
+        <!--</div>-->
+      <!--</div>-->
+      <!--<div class="equationWrapper" id="demoRendering">-->
+        <!--`sum_(i=1)^n i^3=((n(n+1))/2)^2`-->
+      <!--</div>-->
+    <!--</div>-->
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.

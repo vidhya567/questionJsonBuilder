@@ -6,6 +6,7 @@
   "dependencies": {
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "react-mathjax": "git+https://github.com/wko27/react-mathjax.git",
     "react-scripts": "1.1.0"
   },
   "scripts": {

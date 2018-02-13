@@ -1,5 +1,6 @@
 import React from 'react';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import QuestionsDisplayer from './questionDisplayer';
 
 export default class QuestionParser extends React.Component {
     constructor(props) {
@@ -10,7 +11,8 @@ export default class QuestionParser extends React.Component {
             year:'',
             exam:'',
             questions: '',
-            fileName: ''
+            fileName: '',
+            showQuestions: false
         };
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -30,6 +32,8 @@ export default class QuestionParser extends React.Component {
     handleSubmit() {
         var questionText = this.state.textValue;
         if (questionText && questionText.length > 0) {
+            questionText = questionText.replace(/(\r\n|\n|\r)/gm,' ');
+            questionText = questionText.replace(/\s{2,}/g,' ');
             var splitWords = questionText.split(" ");
             var options = ["(1)","(2)","(3)","(4)"];
             var questionStartRegex = RegExp('^\\d+[.]$');
@@ -39,13 +43,21 @@ export default class QuestionParser extends React.Component {
 
             while (index < traversalLength) {
                 var word = splitWords[index];
-                if (questionStartRegex.test(word)) {
+                if (questionStartRegex.test(word) || word === 'END') {
                     var questionBuilder = {};
+                    var equations = [];
+                    var images = [];
                     index += 1;
                     word = splitWords[index];
                     var questionPart = "";
                     while (word != options[0]) {
                         //console.log("Trying to find Question Part",questionPart);
+                        if (word === '*') {
+                            equations.push(index);
+                        }
+                        if (word === '#') {
+                            images.push(index);
+                        }
                         questionPart += (word+" ");
                         index += 1;
                         word = splitWords[index];
@@ -61,12 +73,19 @@ export default class QuestionParser extends React.Component {
                         } else {
                             nextOption = undefined;
                         }
-                        if (word == currentOption) {
+
+                        if (word === currentOption) {
                             index += 1;
                             word = splitWords[index];
                             var optionPart = "";
                             while (word != nextOption && !questionStartRegex.test(word)) {
                                 // console.log("Option Building",i, optionPart);
+                                if (word === '*') {
+                                    equations.push(index);
+                                }
+                                if (word === '#') {
+                                    images.push(index);
+                                }
                                 optionPart += (word + " ");
                                 index += 1;
                                 word = splitWords[index];
@@ -74,19 +93,25 @@ export default class QuestionParser extends React.Component {
                             questionOptions.push(optionPart);
                         }
                     }
-                    questionBuilder["options"] = questionOptions;
+                    questionBuilder['options'] = questionOptions;
+                    questionBuilder['equations'] = equations;
+                    questionBuilder['images'] = images;
+                    questions["questions"].push(questionBuilder);
                 }
-                questions["questions"].push(questionBuilder);
             }
         }
         console.log("questions",questions);
         if (questions) {
-            this.setState({questions:questions["questions"]})
+            this.setState({
+                questions:questions["questions"],
+                showQuestions: true
+            })
         }
-        const fileName = this.state.exam + '_' + this.state.subject + '_' + this.state.year;
-        const param = this.state;
-        param['fileName'] = fileName;
-        this.makePostRequest(param);
+
+        // const fileName = this.state.exam + '_' + this.state.subject + '_' + this.state.year;
+        // const param = this.state;
+        // param['fileName'] = fileName;
+        // this.makePostRequest(param);
     }
 
     makePostRequest (param) {
@@ -100,7 +125,7 @@ export default class QuestionParser extends React.Component {
             },
             body:  JSON.stringify(param)
         }).then( (response) => {
-            console.log("Sucess",response.json());
+            console.log("Success",response.json());
             this.fetchResource(param['fileName']);
         }).catch( (response) => {
             console.log("ERROR",response);
@@ -122,6 +147,10 @@ export default class QuestionParser extends React.Component {
     }
 
     render() {
+        let questionData = null;
+        if (this.state.showQuestions) {
+            questionData =  <QuestionsDisplayer questions={this.state.questions}/>;
+        }
         return (
             <div>
                 <div className="form-group row">
@@ -147,9 +176,10 @@ export default class QuestionParser extends React.Component {
 
                 <div className="form-group">
                     <label> Text to Parse:</label>
-                    <textarea name="textValue" className="form-control" value={this.state.textValue} onChange={this.handleInputChange} rows="20" cols="150">Put text questions here...</textarea>
+                    <textarea name="textValue" className="form-control" value={this.state.textValue} onChange={this.handleInputChange} rows="20" cols="30">Put text questions here...</textarea>
                 </div>
                 <button className="btn btn-primary" onClick={this.handleSubmit}>Parse Text</button>
+                {questionData}
             </div>
         );
     }

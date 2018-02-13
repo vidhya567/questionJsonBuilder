@@ -23,7 +23,6 @@ app.post('/questionJsonBuilder', function (req, res) {
             return;
         }
     });
-    // const readData = readQuestionJson(questionJson);
     res.json({"messagae":"JSON written"});
 });
 
@@ -38,21 +37,5 @@ function saveQuestionJson(questionJson, callback) {
     fs.writeFile(filePath, JSON.stringify(questionJson),'utf-8',callback);
 }
 
-function readQuestionJson(questionJson) {
-    const fileName = questionJson['fileName'];
-    let filePath = './public/unknownFileName.json';
-    if (fileName) {
-        filePath = './public/'+questionJson['fileName']+'.json';
-    }
-    fs.readFile(filePath, (err, data) => {
-        if (err) {
-            return err;
-        }
-        console.log(data);
-        const readData = JSON.parse(data);
-        console.log("Parsed Data",data);
-        return readData;
-    });
-}
 
 app.listen(5000, function () {console.log('Example app listening on port 5000!')})

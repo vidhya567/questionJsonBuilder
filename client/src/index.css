@@ -3,3 +3,34 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+.questionBox {
+  display: flex;
+  background-color: pink;
+  margin-bottom: 3px;
+}
+
+.questionsWrapper {
+  position: relative;
+  margin-bottom: 1rem;
+  height: 350px;
+  overflow: scroll;
+}
+
+.equationWrapper {
+  position: relative;
+  margin-bottom: 1rem;
+  height: 150px;
+  overflow: scroll;
+  background-color: plum;
+  margin-bottom: 3px;
+  display: flex;
+}
+
+.questionPart {
+  text-align: justify;
+}
+
+.form-group {
+  margin-top: 10px;
+}

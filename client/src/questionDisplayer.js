@@ -10,6 +10,7 @@ export default class QuestionsDisplayer extends React.Component {
         this.state = {
             equationsInputted : '',
             textEquations: '',
+            showEquations: false,
             showWithEquations: false
         };
 
@@ -25,6 +26,9 @@ export default class QuestionsDisplayer extends React.Component {
         this.setState({
             [name]: value
         });
+        this.setState({
+            showEquations : true
+        });
         console.log("Handling Input Change for Questions",name,value);
     }
 
@@ -32,7 +36,7 @@ export default class QuestionsDisplayer extends React.Component {
     renderEquation (asciiString) {
         console.log("asciiString", asciiString);
         if (asciiString) {
-            return ( <div className="mb-4 box-shadow">
+            return ( <div className="jumbotron scrollable">
                         <DisplayEquation equationString = {asciiString}/>
                     </div>
                 );
@@ -43,23 +47,90 @@ export default class QuestionsDisplayer extends React.Component {
 
     handleSubmit() {
             this.setState({
-                showWithEquations : true
+                showEquations : true,
+                showWithEquations: true
             });
+    }
+
+    checkLengthMatching (obj1,obj2) {
+        const length1 = obj1.length;
+        const length2 = obj2.length;
+        return (length1 === length2);
+    }
+
+    putEquationsIntoQuestions (questionData, eqnData) {
+        let index = 0;
+        let questionDataArray = [];
+        questionDataArray.push(questionData['questionPart'].split(' '));
+        questionDataArray.push(questionData['options'][0].split(' '));
+        questionDataArray.push(questionData['options'][1].split(' '));
+        questionDataArray.push(questionData['options'][2].split(' '));
+        questionDataArray.push(questionData['options'][3].split(' '));
+
+        return (
+            questionDataArray.map( (questionData,partIndex) => {
+                const eachQuestionPart = questionData.map((data) => {
+                    if (data === '*') {
+                        const showIndex = index;
+                        index += 1;
+                        return <div className="displayEquation">
+                                    <DisplayEquation key={showIndex} equationString={eqnData[showIndex]}/>
+                               </div>;
+                    } else {
+                        return <div> {data} &nbsp; </div>;
+                    }
+                });
+                if (partIndex === 0) {
+                    return <div className="questionPart row" key={partIndex}>{eachQuestionPart}</div>
+                }
+                return <div className="row" key={partIndex}>{eachQuestionPart}</div>
+            })
+        );
 
     }
 
-    checkEqnsSanity() {
-        const questions = this.props.questions;
-        const equationsInputted = this.state.equationsInputted;
+    formProperEquations() {
+        const eqnData = this.state.textEquations;
+        console.log(eqnData);
+        const eqnDataJson = JSON.parse(eqnData);
+        console.log("JSON OBJECT:",eqnDataJson);
+        if (eqnDataJson) {
+            const equations = eqnDataJson['equations'];
+            return equations;
+        } else {
+            return;
+        }
+    }
 
+    renderQuestionsWithEquations() {
+        const questions = this.props.questions;
+        console.log("questions",questions);
+        const equationsInputted = this.formProperEquations();
+        console.log("equations:",equationsInputted);
+        if (equationsInputted) {
+            for (let i=0; i< equationsInputted.length; i++) {
+                const checkLengthMatching = this.checkLengthMatching(questions[i]['equations'], equationsInputted[i]);
+                if (checkLengthMatching) {
+                    return this.putEquationsIntoQuestions(questions[i], equationsInputted[i]);
+                } else {
+                    return <div> Some thing Wrong Question Data Had:{questions[i]['equations'].length} Equations EquationData Had:{equationsInputted[i].length}</div>
+                }
+            }
+        }
+        return;
     }
 
     render() {
         const questions = this.props.questions;
+        console.log("questions",questions);
         const asciiEqns = this.state.textEquations;
         let equations = null;
-        if (asciiEqns && this.state.showWithEquations) {
+        let textWithEquations;
+        if (asciiEqns && this.state.showEquations) {
             equations = this.renderEquation(asciiEqns);
+        }
+        if (asciiEqns && this.state.showWithEquations) {
+            textWithEquations = this.renderQuestionsWithEquations();
         }
         return (
             <div>
@@ -69,11 +140,12 @@ export default class QuestionsDisplayer extends React.Component {
                     </div>
                 </div>
                 <div className="form-group">
-                    <label> Text to Parse:</label>
+                    <label> Equations Data:</label>
                     <textarea name="textEquations" className="form-control" value={this.state.textEquations} onChange={this.handleInputChange} rows="20" cols="30">Put equations here...</textarea>
                 </div>
-                <button className="btn btn-primary" onClick={this.handleSubmit}>Apply Equations</button>
+                <button className="btn btn-primary" onClick={this.handleSubmit}>Equations Output</button>
                 {equations}
+                {textWithEquations}
             </div>
         );
     }

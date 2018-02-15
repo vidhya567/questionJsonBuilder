@@ -19,7 +19,6 @@ body {
 
 .equationWrapper {
   position: relative;
-  margin-bottom: 1rem;
   height: 150px;
   overflow: scroll;
   background-color: plum;
@@ -33,4 +32,16 @@ body {
 
 .form-group {
   margin-top: 10px;
+}
+
+.btn {
+  margin-bottom: 10px;
+}
+
+.scrollable {
+   overflow: scroll;
+}
+
+.displayEquation {
+  margin-right: 1%;
 }

@@ -53,10 +53,10 @@ export default class QuestionParser extends React.Component {
                     while (word != options[0]) {
                         //console.log("Trying to find Question Part",questionPart);
                         if (word === '*') {
-                            equations.push(index);
+                            equations.push(equations.length);
                         }
                         if (word === '#') {
-                            images.push(index);
+                            images.push(images.length);
                         }
                         questionPart += (word+" ");
                         index += 1;
@@ -81,10 +81,10 @@ export default class QuestionParser extends React.Component {
                             while (word != nextOption && !questionStartRegex.test(word)) {
                                 // console.log("Option Building",i, optionPart);
                                 if (word === '*') {
-                                    equations.push(index);
+                                    equations.push(equations.length);
                                 }
                                 if (word === '#') {
-                                    images.push(index);
+                                    images.push(images.length);
                                 }
                                 optionPart += (word + " ");
                                 index += 1;

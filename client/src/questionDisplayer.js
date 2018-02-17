@@ -7,15 +7,27 @@ import DisplayEquation from './displayEquation';
 export default class QuestionsDisplayer extends React.Component {
     constructor(props) {
         super(props);
+        const initialEquationText = this.formEquationHelper(props.questions);
         this.state = {
             equationsInputted : '',
-            textEquations: '',
+            textEquations: initialEquationText,
             showEquations: false,
             showWithEquations: false
         };
 
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    formEquationHelper(questions) {
+        let initialEquationJson = {};
+        initialEquationJson['equations'] = [];
+        for (let question of questions) {
+            const equations = question['equations'];
+            const equation = Array(equations.length).fill(' ');
+            initialEquationJson['equations'].push(equation);
+        }
+        return JSON.stringify(initialEquationJson);
     }
 
     handleInputChange(event) {
@@ -30,6 +42,14 @@ export default class QuestionsDisplayer extends React.Component {
             showEquations : true
         });
         console.log("Handling Input Change for Questions",name,value);
+    }
+
+    renderEquations () {
+        const eqnData = this.formProperEquations();
+        const equations = eqnData['equations'];
+        if (equations) {
+            
+        }
     }
 
 

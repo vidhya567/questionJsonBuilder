@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import './App.css';
 import QuestionParser from './questionParser';
 
-import MathJax from 'react-mathjax';
 
 class App extends Component {
 

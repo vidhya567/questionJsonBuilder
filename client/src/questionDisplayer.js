@@ -45,21 +45,28 @@ export default class QuestionsDisplayer extends React.Component {
     }
 
     renderEquations () {
-        const eqnData = this.formProperEquations();
-        const equations = eqnData['equations'];
-        if (equations) {
-            
-        }
+        const equations = this.formProperEquations();
+
+        const eqns = equations.map( (eqn,partIndex) => {
+            const eachQuestionPart = eqn.map((data,qeqnIndex) => {
+                if (data) {
+                    return <div className="displayEquation">
+                        <DisplayEquation key={qeqnIndex} equationString={data}/>
+                    </div>;
+                }
+            });
+            return <div className="row" key={partIndex}>{partIndex} &nbsp; {eachQuestionPart}</div>
+        });
+        return <div className="jumbotron scrollable equationBox">
+                    {eqns}
+                </div>
     }
 
 
-    renderEquation (asciiString) {
+    renderEquation (asciiString, key) {
         console.log("asciiString", asciiString);
         if (asciiString) {
-            return ( <div className="jumbotron scrollable">
-                        <DisplayEquation equationString = {asciiString}/>
-                    </div>
-                );
+            return (<DisplayEquation key={key} equationString = {asciiString}/>);
         } else {
             return null;
         }
@@ -75,7 +82,14 @@ export default class QuestionsDisplayer extends React.Component {
     checkLengthMatching (obj1,obj2) {
         const length1 = obj1.length;
         const length2 = obj2.length;
-        return (length1 === length2);
+        let someData = false;
+        for (let objEqn of obj2) {
+            if (objEqn.trim().length !== 0) {
+                someData = true;
+                break;
+            }
+        }
+        return (length1 === length2) && someData;
     }
 
     putEquationsIntoQuestions (questionData, eqnData) {
@@ -127,17 +141,20 @@ export default class QuestionsDisplayer extends React.Component {
         console.log("questions",questions);
         const equationsInputted = this.formProperEquations();
         console.log("equations:",equationsInputted);
+        let data = null;
         if (equationsInputted) {
-            for (let i=0; i< equationsInputted.length; i++) {
-                const checkLengthMatching = this.checkLengthMatching(questions[i]['equations'], equationsInputted[i]);
+            data = equationsInputted.map((equationInputted,i) => {
+                const checkLengthMatching = this.checkLengthMatching(questions[i]['equations'], equationInputted);
                 if (checkLengthMatching) {
-                    return this.putEquationsIntoQuestions(questions[i], equationsInputted[i]);
+                    return this.putEquationsIntoQuestions(questions[i], equationInputted);
                 } else {
                     return <div> Some thing Wrong Question Data Had:{questions[i]['equations'].length} Equations EquationData Had:{equationsInputted[i].length}</div>
                 }
-            }
+            } ) ;
         }
-        return;
+        return <div className="jumbotron scrollable equationBox">
+            {data}
+        </div>;
     }
 
     render() {
@@ -147,7 +164,7 @@ export default class QuestionsDisplayer extends React.Component {
         let equations = null;
         let textWithEquations;
         if (asciiEqns && this.state.showEquations) {
-            equations = this.renderEquation(asciiEqns);
+            equations = this.renderEquations();
         }
         if (asciiEqns && this.state.showWithEquations) {
             textWithEquations = this.renderQuestionsWithEquations();
@@ -156,7 +173,7 @@ export default class QuestionsDisplayer extends React.Component {
             <div>
                 <div className="form-group">
                     <div className="form-control questionsWrapper"  rows="20" cols="150">
-                        {questions.map((question, index) => <Question key={index} questionData = {question}/>)}
+                        {questions.map((question, index) => <Question key={index} questionIndex={index+"."} questionData = {question}/>)}
                     </div>
                 </div>
                 <div className="form-group">

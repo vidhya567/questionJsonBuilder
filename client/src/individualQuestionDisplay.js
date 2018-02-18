@@ -9,6 +9,7 @@ export default class Question extends React.Component {
     }
     render() {
         const question = this.props.questionData;
+        const index = this.props.questionIndex;
         const questionPart = question['questionPart'];
         const questionOptions = question['options'];
         const option1 =  questionOptions[0] || '';
@@ -19,7 +20,7 @@ export default class Question extends React.Component {
         return (
             <div className="questionBox">
                 <div className="container">
-                    <div className="row questionPart">{questionPart}</div>
+                    <div className="row questionPart">{index} &nbsp; {questionPart}</div>
                     <div className="row">{option1}</div>
                     <div className="row">{option2}</div>
                     <div className="row">{option3}</div>

@@ -45,3 +45,7 @@ body {
 .displayEquation {
   margin-right: 1%;
 }
+
+.equationBox {
+    height: 100px!important;
+}

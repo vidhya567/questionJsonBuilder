@@ -1,5 +1,5 @@
 import React from 'react';
-import MathJax from 'react-mathjax2';
+import MathJax from 'react-mathjax';
 
 export default class  DisplayEquation extends React.Component {
 
